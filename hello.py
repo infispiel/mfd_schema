@@ -1,4 +1,5 @@
 from lark import Lark
+from src.mfdobjs import TreeToSchemaObjs
 
 def main():
     schema_parser = Lark(open("src/grammar.lark"), start="value", 
@@ -10,14 +11,18 @@ def main():
         ex_1 = file.read()
 
     t = schema_parser.parse(ex_1)
-    print( t.pretty())
+    #print( t.pretty())
+    schemaobjs = TreeToSchemaObjs().transform(t)
+    print(schemaobjs)
 
     ex_2 = ""
     with open('examples/contributor_ex') as file :
         ex_2 = file.read()
 
     t = schema_parser.parse(ex_2)
-    print( t.pretty() )
+    #print( t.pretty() )
+    schemaobjs = TreeToSchemaObjs().transform(t)
+    print(schemaobjs)
 
 
 if __name__ == "__main__":

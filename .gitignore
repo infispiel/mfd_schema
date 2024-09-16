@@ -3,3 +3,4 @@ uv.lock
 .ruff_cache/*
 .venv/*
 tests/__pycache__
+src/__pycache__

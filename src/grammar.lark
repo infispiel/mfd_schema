@@ -3,18 +3,18 @@
 %import common.WS
 %ignore WS
 
-value               : major_token_def
+?value              : major_token_def
 
 REQ                 : "?" | "!"
 COMP                : "==" | ">" | ">=" | "<=" | "<" | "!="
 EXIST               : "!"
 
-major_token_def     : major_token "{" [major_token_content ("," major_token_content)* (",")?] "}"
-minor_token_def     : minor_token ":" WORD
-token_rule          : "requires " WORD COMP ESCAPED_STRING "=>" [EXIST]WORD
+?token_name          : WORD
+?minor_type          : WORD
 
-major_token_content : minor_token_def
+major_token_def     : "@" token_name [REQ] "{" [major_token_content ("," major_token_content)* (",")?] "}"
+minor_token_def     : token_name [REQ] ":" minor_type
+token_rule          : "requires " token_name COMP ESCAPED_STRING "=>" [EXIST]token_name
+
+?major_token_content: minor_token_def
                     | token_rule
-
-major_token         : "@" WORD [REQ]
-minor_token         : WORD [REQ]
