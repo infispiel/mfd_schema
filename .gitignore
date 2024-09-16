@@ -1,0 +1,4 @@
+uv.lock
+.uv_cache/*
+.ruff_cache/*
+.venv/*
