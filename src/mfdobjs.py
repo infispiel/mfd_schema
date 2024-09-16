@@ -2,12 +2,12 @@ from typing import Dict, List, Tuple, Union
 from lark import Transformer
 
 class MinorDefinition :
-    minor_definition: str
+    minor_def: str
     is_required: bool
     minor_type: str
 
-    def __init__(self, minor_definition: str, is_required: bool, minor_type: str) :
-        self.minor_definition = minor_definition
+    def __init__(self, minor_def: str, is_required: bool, minor_type: str) :
+        self.minor_def = minor_def
         self.is_required = is_required
         self.minor_type = minor_type
 
@@ -16,7 +16,7 @@ class MinorDefinition :
         return
 
     def __str__(self) -> str:
-        res = "Minor: {minor_def} ({req}) of type {type}".format(minor_def = self.minor_definition, req = "req" if self.is_required else "opt", type = self.minor_type)
+        res = "Minor: {minor_def} ({req}) of type {type}".format(minor_def = self.minor_def, req = "req" if self.is_required else "opt", type = self.minor_type)
         return res
 
 class Rule:
@@ -48,10 +48,9 @@ class Rule:
     
     def validate_semantics(self) -> None :
         # check for logical fallicies :(
-
         if not self.second_exists : # "if result is Does Not Exist") :
             if self.first_minor == self.second_minor :
-                raise ValueError("Cannot require that a token does not exist if the token exists.")
+                raise ValueError("Cannot require that a token does not exist if the token fulfills some requirements.")
         return
         
     def __str__(self) -> str :
@@ -65,7 +64,7 @@ class Rule:
 class MajorDefinition :
     major_def: str
     is_required: bool
-    minor_defs: List[MinorDefinition]
+    minor_defs: Dict[str, MinorDefinition]
     rules: List[Rule]
 
     def __init__(self, major_def: str, is_required: bool, content: Union[MinorDefinition, List[Union[MinorDefinition, Rule]]]) :
@@ -73,16 +72,16 @@ class MajorDefinition :
         self.is_required = is_required
         
         if isinstance(content,MinorDefinition) :
-            self.minor_defs = [content]
+            self.minor_defs = {content.minor_def: content}
             self.rules = []
         elif isinstance(content, Rule) :
             raise TypeError("Cannot have Rules without MinorDefinition in a MajorDefinition.")
         elif isinstance(content, List) :
-            self.minor_defs = []
+            self.minor_defs = {}
             self.rules = []
             for c in content :
                 if isinstance(c,MinorDefinition) :
-                    self.minor_defs.append(c)
+                    self.minor_defs[c.minor_def] = c
                 elif isinstance(c,Rule) :
                     self.rules.append(c)
                 elif c is None :
@@ -90,16 +89,13 @@ class MajorDefinition :
                 else :
                     raise TypeError("Unexpected type passed as content to MajorDefinition in a List.")
         elif content is None :
-            self.minor_defs = []
+            self.minor_defs = {}
             self.rules = []
         else :
             raise TypeError("Unexpected type passed to MajorDefinition.")
 
     def _defined_minor_tokens(self) -> List[str] :
-        defined_minors: List[str] = []
-        for minor in self.minor_defs :
-            defined_minors.append(minor.minor_definition)
-
+        defined_minors: List[str] = self.minor_defs.keys()
         return defined_minors
     
     def _referenced_minor_tokens(self) -> List[str] :
@@ -119,15 +115,27 @@ class MajorDefinition :
         for r in self.rules :
             r.validate_semantics()
         
-        for m in self.minor_defs :
+        for m in self.minor_defs.values() :
             m.validate_semantics()
+
+        # Ensure that if a rule exists to determine whether a minor token is required,
+        #   that minor token is not already required (TODO: Change to WARN.)
+        # Ensure that if a rule exists to determine whether a minor token should not exist,
+        #   that minor token is not required.
+        for r in self.rules :
+            if r.second_exists :
+                if self.minor_defs[r.second_minor].is_required :
+                    raise ValueError("Defined a rule that determines whether {minor} exists, but {minor} is required.".format(minor=r.second_minor))
+            else :
+                if self.minor_defs[r.second_minor].is_required :
+                    raise ValueError("Defined a rule determines whether {minor} must not exist, but {minor} is required. Please set {minor} to optional.".format(minor=r.second_minor))
 
         return
                 
     def __str__(self) -> str:
         res = "Major: {major_token} ({req})".format(major_token = self.major_def, req = "req" if self.is_required else "opt")
         if len(self.minor_defs) > 0 or len(self.rules) > 0 :
-            for m in self.minor_defs :
+            for m in self.minor_defs.values() :
                 res += "\n       " + m.__str__()
             for r in self.rules :
                 res += "\n       " + r.__str__()
