@@ -3,7 +3,7 @@ def MEDFORD_Version(inp: str) -> bool :
 
 def Validators(majortoken: str, typename: str) -> callable :
     fullname = majortoken + "_" + typename
-    if fullname == "MEDFORD_VERSION" : 
+    if fullname.lower() == "medford_version" : 
         return MEDFORD_Version
     
     raise NotImplementedError("Unknown validator requested.")

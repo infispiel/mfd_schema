@@ -1,5 +1,6 @@
 from lark import Lark
 from src.mfdobjs import TreeToSchemaObjs
+from src.typedefs import Validators
 
 def main():
     schema_parser = Lark(open("src/grammar.lark"), start="tokens", 
@@ -31,6 +32,7 @@ def main():
     t = schema_parser.parse(ex_3)
     #print( t.pretty() )
     schemaobjs = TreeToSchemaObjs().transform(t)
+    schemaobjs.validate_semantics()
     print(schemaobjs)
 
 if __name__ == "__main__":

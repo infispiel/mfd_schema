@@ -8,5 +8,5 @@
 }
 
 @Medford! {
-    version!: string
+    version!: version
 }
