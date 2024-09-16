@@ -1,7 +1,7 @@
 from lark import Lark
 
 def main():
-    schema_parser = Lark(open("grammar.lark"), start="value", 
+    schema_parser = Lark(open("src/grammar.lark"), start="value", 
                          maybe_placeholders=True,
                          propagate_positions=True)
 

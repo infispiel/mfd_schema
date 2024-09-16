@@ -3,7 +3,7 @@
 %import common.WS
 %ignore WS
 
-value           : major_token_def
+value               : major_token_def
 
 REQ                 : "?" | "!"
 COMP                : "==" | ">" | ">=" | "<=" | "<" | "!="
