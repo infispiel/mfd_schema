@@ -2,7 +2,7 @@ from lark import Lark
 from src.mfdobjs import TreeToSchemaObjs
 
 def main():
-    schema_parser = Lark(open("src/grammar.lark"), start="value", 
+    schema_parser = Lark(open("src/grammar.lark"), start="tokens", 
                          maybe_placeholders=True,
                          propagate_positions=True)
 
@@ -24,6 +24,14 @@ def main():
     schemaobjs = TreeToSchemaObjs().transform(t)
     print(schemaobjs)
 
+    ex_3 = ""
+    with open('examples/multiple_ex') as file :
+        ex_3 = file.read()
+
+    t = schema_parser.parse(ex_3)
+    #print( t.pretty() )
+    schemaobjs = TreeToSchemaObjs().transform(t)
+    print(schemaobjs)
 
 if __name__ == "__main__":
     main()

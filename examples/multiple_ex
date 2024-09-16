@@ -1,0 +1,12 @@
+
+@Contributor {
+    ORCID?: orcid,
+    Association?: institution,
+    Role?: string,
+    Email?: email,
+    requires Role == "Corresponding" => Email
+}
+
+@Medford! {
+    version!: string
+}

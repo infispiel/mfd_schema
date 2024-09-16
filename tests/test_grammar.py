@@ -1,6 +1,6 @@
 from lark import Lark
 grammar = "src/grammar.lark"
-opts = {"start": "value",
+opts = {"start": "tokens",
         "maybe_placeholders": True,
         "propagate_positions": True}
 

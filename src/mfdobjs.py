@@ -87,6 +87,20 @@ class MajorToken :
                 res += "\n       " + r.__str__()
         return res
 
+class SchemaImport :
+    # TODO : make more functional
+    #   e.g. defined major tokens
+    content: list
+    def __init__(self, content) :
+        self.content = content
+
+    def __str__(self) -> str :
+        res = "Schema Import: "
+        for m in self.content: 
+            res += "\n       "
+            res += "       ".join(m.__str__().splitlines(True))
+        return res
+
 class TreeToSchemaObjs(Transformer):
     WORD = str
 
@@ -108,3 +122,6 @@ class TreeToSchemaObjs(Transformer):
     def token_rule(self, items) :
         first_minor, test_type, test_content, res_type, second_minor = items
         return Rule(first_minor, test_type, test_content, res_type, second_minor)
+    
+    def tokens(self, items) :
+        return SchemaImport(items)

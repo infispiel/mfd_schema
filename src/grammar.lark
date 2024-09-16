@@ -3,14 +3,14 @@
 %import common.WS
 %ignore WS
 
-?value              : major_token_def
+tokens              : major_token_def*
 
 REQ                 : "?" | "!"
 COMP                : "==" | ">" | ">=" | "<=" | "<" | "!="
 EXIST               : "!"
 
-?token_name          : WORD
-?minor_type          : WORD
+?token_name         : WORD
+?minor_type         : WORD
 
 major_token_def     : "@" token_name [REQ] "{" [major_token_content ("," major_token_content)* (",")?] "}"
 minor_token_def     : token_name [REQ] ":" minor_type
