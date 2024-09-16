@@ -1,0 +1,13 @@
+[project]
+name = "mfd-schema"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "lark>=1.2.2",
+    "ruff>=0.6.5",
+]
+
+[tool.uv]
+cache-dir = "./.uv_cache"

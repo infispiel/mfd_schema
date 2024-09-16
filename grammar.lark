@@ -1,0 +1,20 @@
+%import common.WORD 
+%import common.ESCAPED_STRING
+%import common.WS
+%ignore WS
+
+value           : major_token_def
+
+REQ                 : "?" | "!"
+COMP                : "==" | ">" | ">=" | "<=" | "<" | "!="
+EXIST               : "!"
+
+major_token_def     : major_token "{" [major_token_content ("," major_token_content)* (",")?] "}"
+minor_token_def     : minor_token ":" WORD
+token_rule          : "requires " WORD COMP ESCAPED_STRING "=>" [EXIST]WORD
+
+major_token_content : minor_token_def
+                    | token_rule
+
+major_token         : "@" WORD [REQ]
+minor_token         : WORD [REQ]
